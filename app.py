@@ -1,3 +1,5 @@
+from multiprocessing import Value
+from time import time, sleep
 import numpy as np
 import cv2
 import streamlit as st
@@ -181,6 +183,8 @@ face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_con
 mp_drawing = mp.solutions.drawing_utils
 drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
 
+emotion_count = {'Focused': 0, 'Distracted': 0}
+
 class VideoTransformer(VideoTransformerBase):
     def __init__(self) -> None:
         super().__init__()
@@ -363,18 +367,27 @@ def main():
         st.markdown(html_temp_home1, unsafe_allow_html=True)
         st.write("""
                  The application functionalities.
-
                  - Real time face emotion recognization.
-
                  """)
     elif choice == "Webcam Face Detection":
+
         st.header("Webcam Live Feed")
         st.write("Click on start to use webcam and detect your face emotion")
         ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer)
-        # st.text_input(key='inputText', label='kardeinput', on_change=update_text)
-        # st.text_input(key='')
-        if ctx.video_processor : 
-            st.text_area(key="writer", value=ctx.video_processor.some_value, label="State")    
+
+        logtxtbox = st.empty()
+        # cntbox = st.empty()
+        while ctx.video_processor:
+            # if ctx.video_processor.some_value not in emotion_count:
+            #     emotion_count[ctx.video_processor.some_value] = 0
+            emotion_count[ctx.video_processor.some_value] += 1
+            logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
+                +str(emotion_count['Focused'])+","
+                +str(emotion_count['Distracted']))
+            # cntbox.write(emotion_count)
+            print(ctx.video_processor.some_value, emotion_count)
+        print(emotion_count)
+            
 
     elif choice == "About":
         st.subheader("About this app")

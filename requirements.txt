@@ -4,3 +4,7 @@ keras~=2.4.3
 opencv-contrib-python-headless
 tensorflow-cpu
 streamlit_webrtc
+tensorflow
+cmake
+dlib
+mediapipe
