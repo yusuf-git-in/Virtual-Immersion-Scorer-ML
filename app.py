@@ -183,7 +183,7 @@ face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_con
 mp_drawing = mp.solutions.drawing_utils
 drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
 
-emotion_count = {'Focused': 0, 'Distracted': 0}
+# emotion_count = {'Focused': 0, 'Distracted': 0}
 
 class VideoTransformer(VideoTransformerBase):
     def __init__(self) -> None:
@@ -352,65 +352,26 @@ def main():
     # Face Analysis Application #
 
     st.title("Real Time Face Emotion Detection Application")
-    activiteis = ["Home", "Webcam Face Detection", "About"]
-    choice = st.sidebar.selectbox("Select Activity", activiteis)
-    st.sidebar.markdown(
-        """ Developed by Name    
-            Email : email  
-            [LinkedIn] (link)""")
-    if choice == "Home":
-        html_temp_home1 = """<div style="background-color:#6D7B8D;padding:10px">
-                                            <h4 style="color:white;text-align:center;">
-                                            Face Emotion detection application using OpenCV, Custom CNN model and Streamlit.</h4>
-                                            </div>
-                                            </br>"""
-        st.markdown(html_temp_home1, unsafe_allow_html=True)
-        st.write("""
-                 The application functionalities.
-                 - Real time face emotion recognization.
-                 """)
-    elif choice == "Webcam Face Detection":
 
-        st.header("Webcam Live Feed")
-        st.write("Click on start to use webcam and detect your face emotion")
-        ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer)
+    emotion_count = {'Focused': 0, 'Distracted': 0}
+    if "emotion_count" not in st.session_state:
+        st.session_state.emotion_count = emotion_count
 
-        logtxtbox = st.empty()
-        # cntbox = st.empty()
-        while ctx.video_processor:
-            # if ctx.video_processor.some_value not in emotion_count:
-            #     emotion_count[ctx.video_processor.some_value] = 0
-            emotion_count[ctx.video_processor.some_value] += 1
-            logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
-                +str(emotion_count['Focused'])+","
-                +str(emotion_count['Distracted']))
-            # cntbox.write(emotion_count)
-            print(ctx.video_processor.some_value, emotion_count)
-        print(emotion_count)
-            
+    st.header("Webcam Live Feed")
+    st.write("Click on start to use webcam and detect your face emotion")
+    ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer)
 
-    elif choice == "About":
-        st.subheader("About this app")
-        html_temp_about1= """<div style="background-color:#6D7B8D;padding:10px">
-                                    <h4 style="color:white;text-align:center;">
-                                    Real time face emotion detection application using OpenCV, Custom Trained CNN model and Streamlit.</h4>
-                                    </div>
-                                    </br>"""
-        st.markdown(html_temp_about1, unsafe_allow_html=True)
-
-        html_temp4 = """
-                             		<div style="background-color:#98AFC7;padding:10px">
-                             		<h4 style="color:white;text-align:center;">This Application is developed by Mohammad Juned Khan using Streamlit Framework, Opencv, Tensorflow and Keras library for demonstration purpose. If you're on LinkedIn and want to connect, just click on the link in sidebar and shoot me a request. If you have any suggestion or wnat to comment just write a mail at Mohammad.juned.z.khan@gmail.com. </h4>
-                             		<h4 style="color:white;text-align:center;">Thanks for Visiting</h4>
-                             		</div>
-                             		<br></br>
-                             		<br></br>"""
-
-        st.markdown(html_temp4, unsafe_allow_html=True)
-
-    else:
-        pass
-
+    logtxtbox = st.empty()
+    while ctx.video_processor:
+        emotion_count[ctx.video_processor.some_value] += 1
+        logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
+            +str(emotion_count['Focused'])+","
+            +str(emotion_count['Distracted']))
+        # cntbox.write(emotion_count)
+        print(ctx.video_processor.some_value, emotion_count)
+        st.session_state.emotion_count = emotion_count
+    emotion_count = st.session_state.emotion_count
+    print("End:",emotion_count)
 
 if __name__ == "__main__":
     main()

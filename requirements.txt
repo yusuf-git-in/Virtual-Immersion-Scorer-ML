@@ -8,3 +8,4 @@ tensorflow
 cmake
 dlib
 mediapipe
+streamlit-authenticator
