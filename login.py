@@ -2,6 +2,7 @@ from multiprocessing import Value
 
 from time import time, sleep
 from matplotlib import use
+from nbformat import read
 import numpy as np
 import cv2
 import streamlit as st
@@ -13,7 +14,6 @@ from face_landmarks import get_landmark_model, detect_marks
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 from gaze_tracking import GazeTracking
 import mediapipe as mp
-
 import streamlit_authenticator as stauth
 import subprocess
 
@@ -21,13 +21,18 @@ import hashlib
 
 import mysql.connector
 
+import datetime
+
 from face_detector import get_face_detector, find_faces
 from face_landmarks import get_landmark_model, detect_marks
+
+# with open('style.css') as f:
+#     st.markdown(f'<style>{f.read()}</style>',unsafe_allow_html=True)
 
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
-  password="Uk@336207"
+  password="Ka$560037KA"
 )
 
 print(mydb)
@@ -415,6 +420,11 @@ def main():
 
         result = login_user(username,check_hashes(password,hashed_pswd))
         if result or True:
+            first_time=datetime.datetime.now()
+            print(first_time)
+            current_time=first_time
+            print(current_time)
+
             # subprocess.Popen(["streamlit", "run", "app.py"])
 
             print("###############",username,"###############")
@@ -430,14 +440,19 @@ def main():
 
             logtxtbox = st.empty()
             while ctx.video_processor:
-                emotion_count[ctx.video_processor.some_value] += 1
-                logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
-                    +str(emotion_count['Focused'])+","
-                    +str(emotion_count['Distracted']))
+                current_time=datetime.datetime.now()
+                duration=(current_time-first_time).seconds
+                print(duration)
+                if first_time==current_time or duration==2:
+                    emotion_count[ctx.video_processor.some_value] += 1
+                    logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
+                        +str(emotion_count['Focused'])+","
+                        +str(emotion_count['Distracted']))
+                    print(ctx.video_processor.some_value, emotion_count)
+                    st.session_state.emotion_count = emotion_count
+                    first_time=current_time
+                    current_time=datetime.datetime.now()
                 
-                print(ctx.video_processor.some_value, emotion_count)
-                st.session_state.emotion_count = emotion_count
-            
             emotion_count = st.session_state.emotion_count
             print("End:",emotion_count)
 
