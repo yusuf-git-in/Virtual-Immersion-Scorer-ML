@@ -32,7 +32,7 @@ from face_landmarks import get_landmark_model, detect_marks
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
-  password="Ka$560037KA"
+  password="Uk@336207"
 )
 
 print(mydb)
@@ -406,15 +406,46 @@ def view_all_users():
 	data = cursor.fetchall()
 	return data
 
+def clear_form():
+    st.session_state["username"] = ""
+    st.session_state["password"] = ""
+    st.session_state["loggedIn"] = False
+
 def main():
     """Login App"""
 
     st.sidebar.title("LogIn")
     st.title("Virtual Immersion Scorer")
 
-    username = st.sidebar.text_input("User Name")
-    password = st.sidebar.text_input("Password",type='password')
-    if st.sidebar.checkbox("Login"):
+    username = st.sidebar.text_input("User Name", key="username")
+    password = st.sidebar.text_input("Password",type='password', key="password")
+    if st.sidebar.checkbox("Login", key="loggedIn"):
+
+        if st.button("Logout", on_click=clear_form):
+            st.markdown("""
+            <style>
+            .css-17eq0hr, .css-1iyw2u1 {
+                    display: true;
+                }
+            .css-qbe2hs {
+                display: none;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <style>
+            .css-17eq0hr, .css-1iyw2u1 {
+                    display: none;
+                }
+            .css-qbe2hs {
+                position: fixed;
+                top: 2%;
+                right: 2%;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+
         create_usertable()
         hashed_pswd = make_hashes(password)
 
@@ -436,13 +467,13 @@ def main():
 
             st.header("Webcam Live Feed")
             st.write("Click on start to use webcam and detect your face emotion")
-            ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer)
+            ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer, media_stream_constraints={"video": True, "audio": False})
 
             logtxtbox = st.empty()
             while ctx.video_processor:
                 current_time=datetime.datetime.now()
                 duration=(current_time-first_time).seconds
-                print(duration)
+                print()
                 if first_time==current_time or duration==2:
                     emotion_count[ctx.video_processor.some_value] += 1
                     logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
@@ -455,6 +486,7 @@ def main():
                 
             emotion_count = st.session_state.emotion_count
             print("End:",emotion_count)
+            st.session_state.emotion_count = {'Focused': 0, 'Distracted': 0}
 
             # st.success("Logged In as {}".format(username))
 
