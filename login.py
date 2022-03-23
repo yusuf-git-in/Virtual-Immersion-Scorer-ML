@@ -92,15 +92,15 @@ class VideoTransformer(VideoTransformerBase):
         '''
         success = detect_face(image)
         if not success :
+            cv.putText(image, "Cannot Find Face", (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             return image
         
-        
+        #cv.putText(image, "FOund", (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         '''
             Get Eye Direction
         '''
-        eye_direction = eye_direction(image)
-        
-        
+        #eye_direction = eye_direction(image)
+        #cv.putText(image, eye_direction, (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         '''
             Head Pose Estimation
         '''
