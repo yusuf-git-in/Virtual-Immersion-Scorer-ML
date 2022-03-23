@@ -64,16 +64,16 @@ def head_pose(img):
             y = angles[1] * 360
             z = angles[2] * 360
             
-            if y < -20:
+            if y < -10:
                 pose = "left"
     
-            elif y > 20:
+            elif y > 10:
                 pose = "right"
     
-            elif x < -20:
+            elif x < -10:
                 pose = "down"
     
-            elif x > 20:
+            elif x > 10:
                 pose = "up"
     
             else:
