@@ -26,11 +26,8 @@ with open('static/css/style.css') as f:
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
-<<<<<<< HEAD
-=======
   #password="Ka$560037KA"
   #password="root"
->>>>>>> dev_yf
   password="Uk@336207"
 )
 
@@ -238,12 +235,8 @@ def main():
                 current_time=datetime.datetime.now()
                 duration=(current_time-first_time).seconds
                 print()
-<<<<<<< HEAD
-                if first_time==current_time or duration==2:
-=======
                 # updates only if face found
                 if((first_time==current_time or duration==2) and ctx.video_processor.success):
->>>>>>> dev_yf
                     emotion_count[ctx.video_processor.some_value] += 1
                     logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
                         +str(emotion_count['Focused'])+","
