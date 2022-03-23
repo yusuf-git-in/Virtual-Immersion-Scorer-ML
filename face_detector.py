@@ -1,14 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jul 29 17:52:00 2020
-
-@author: hp
-"""
-
 import cv2
 import numpy as np
 
-def get_face_detector(modelFile=None,
+def get_model(modelFile=None,
                       configFile=None,
                       quantized=False):
     """
@@ -93,3 +86,23 @@ def draw_faces(img, faces):
     for x, y, x1, y1 in faces:
         cv2.rectangle(img, (x, y), (x1, y1), (0, 0, 255), 3)
         
+def detect_face(img) :
+    """
+    Detect Faces
+
+    Parameters
+    ----------
+    img : np.uint8
+        Image to draw faces on
+
+    Returns
+    -------
+    bool
+    """
+    face_detection_model = get_model()
+    detected_face_coordinates = find_faces(img, face_detection_model)
+    
+    if len(detected_face_coordinates) != 0 :
+        return True
+    else : 
+        return False
