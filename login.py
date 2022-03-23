@@ -27,8 +27,8 @@ mydb = mysql.connector.connect(
   host="localhost",
   user="root",
   #password="Ka$560037KA"
-  #password="root"
-  password="Uk@336207"
+  password="root"
+  #password="Uk@336207"
 )
 
 print(mydb)
@@ -93,12 +93,11 @@ class VideoTransformer(VideoTransformerBase):
             Detect Face
         '''
         success = detect_face(image)
+        self.success = success
         if not success :
             cv.putText(image, "Cannot Find Face", (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            self.success = False
             return image
-        
-        self.success = True         
+              
         #cv.putText(image, "FOund", (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         '''
             Get Eye Direction
@@ -236,8 +235,9 @@ def main():
                 duration=(current_time-first_time).seconds
                 print()
                 # updates only if face found
-                if((first_time==current_time or duration==2) and ctx.video_processor.success):
-                    emotion_count[ctx.video_processor.some_value] += 1
+                if first_time==current_time or duration==2:
+                    if ctx.video_processor.success:
+                        emotion_count[ctx.video_processor.some_value] += 1
                     logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
                         +str(emotion_count['Focused'])+","
                         +str(emotion_count['Distracted']))
