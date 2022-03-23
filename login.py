@@ -61,6 +61,7 @@ class VideoTransformer(VideoTransformerBase):
     def __init__(self) -> None:
         super().__init__()
         self.some_value = "Focused" 
+        self.success = True
 
     def transform(self, frame):
         frame = frame.to_ndarray(format="bgr24")
@@ -93,8 +94,10 @@ class VideoTransformer(VideoTransformerBase):
         success = detect_face(image)
         if not success :
             cv.putText(image, "Cannot Find Face", (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            self.success = False
             return image
         
+        self.success = True         
         #cv.putText(image, "FOund", (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         '''
             Get Eye Direction
@@ -200,7 +203,8 @@ def main():
                 current_time=datetime.datetime.now()
                 duration=(current_time-first_time).seconds
                 print(duration)
-                if first_time==current_time or duration==2:
+                # updates only if face found
+                if first_time==current_time or duration==2 and ctx.video_processor.success:
                     emotion_count[ctx.video_processor.some_value] += 1
                     logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
                         +str(emotion_count['Focused'])+","
