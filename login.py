@@ -4,13 +4,13 @@ from time import time, sleep
 from matplotlib import use
 from nbformat import read
 import streamlit as st
-from tensorflow import keras
-from keras.models import model_from_json
-from keras.preprocessing.image import img_to_array
+# from tensorflow import keras
+# from keras.models import model_from_json
+# from keras.preprocessing.image import img_to_array
 from face_detector import detect_face
 from eye_tracking import eye_direction
 from head_pose_estimation import head_pose 
-from face_landmarks import get_landmark_model, detect_marks
+# from face_landmarks import get_landmark_model, detect_marks
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 import mediapipe as mp
 import streamlit_authenticator as stauth
@@ -37,22 +37,22 @@ cursor.execute("create database IF NOT EXISTS immersion_scorer_db")
 cursor.execute("use immersion_scorer_db")
 
 
-# load model
-emotion_dict = {0:'angry', 1 :'happy', 2: 'neutral', 3:'sad', 4: 'surprise'}
-# load json and create model
-json_file = open('emotion_model1.json', 'r')
-loaded_model_json = json_file.read()
-json_file.close()
-classifier = model_from_json(loaded_model_json)
+# # load model
+# emotion_dict = {0:'angry', 1 :'happy', 2: 'neutral', 3:'sad', 4: 'surprise'}
+# # load json and create model
+# json_file = open('emotion_model1.json', 'r')
+# loaded_model_json = json_file.read()
+# json_file.close()
+# classifier = model_from_json(loaded_model_json)
 
-# load weights into new model
-classifier.load_weights("emotion_model1.h5")
+# # load weights into new model
+# classifier.load_weights("emotion_model1.h5")
 
-#load face
-try:
-    face_cascade = cv.CascadeClassifier('haarcascade_frontalface_default.xml')
-except Exception:
-    st.write("Error loading cascade classifiers")
+# #load face
+# try:
+#     face_cascade = cv.CascadeClassifier('haarcascade_frontalface_default.xml')
+# except Exception:
+#     st.write("Error loading cascade classifiers")
     
     
 # emotion_count = {'Focused': 0, 'Distracted': 0}
