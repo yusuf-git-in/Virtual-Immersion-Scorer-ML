@@ -1,6 +1,2 @@
-1. Install 
-2. pip3 install mediapipe
-3. pip3 install streamlit
-4. pip3 install streamlit_webrtc
-5. pip3 install tensorflow-cpu
-6. Then run the following command "streamlit run app.py"
+Dependency Installation - pip3 install -r requirements.txt
+Run app - streamlit run app.py
