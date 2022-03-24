@@ -1,19 +1,19 @@
 /* sidebar */
-.css-zbg2rx{
+.css-zbg2rx {
   background-color: #577590;
   padding-top: 50%;
 }
 
 /* sidebar-heading */
-.css-nlntq9 >h1{
+.css-nlntq9 > h1 {
   color: #fff;
-  font-size:50px;
+  font-size: 50px;
 }
 
 /* sidebar-textfields */
-.css-qrbaxs{
+.css-qrbaxs {
   color: #fff;
-  font-size:20px;
+  font-size: 20px;
   padding: 20px 0;
 }
 
@@ -56,7 +56,6 @@
   padding: 0 40px;
 }
 .css-1djdyxw:hover {
-  
   color: #f94144;
   border-radius: 4px;
   border: 1px solid #f94144;
@@ -65,13 +64,26 @@
   line-height: 3em;
   width: 8em;
   height: 3em;
-} 
+}
 
-.main{
+/* Body */
+.main {
   background-color: #dbe9ee;
 }
 
-#virtual-immersion-scorer{
+/* Title */
+#virtual-immersion-scorer {
   color: black;
 }
 
+/* Logo */
+/* .css-css-1v0mbdj > img {
+  position: relative;
+  top: 10px;
+  right: 50px;
+} */
+.css-1v0mbdj {
+  position: relative;
+  top: 120px;
+  right: 100px;
+}

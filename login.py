@@ -28,8 +28,8 @@ mydb = mysql.connector.connect(
   host="localhost",
   user="root",
   #password="Ka$560037KA"
-  password="root"
-  #password="Uk@336207"
+#   password="root"
+  password="Uk@336207"
 )
 
 print(mydb)
@@ -173,18 +173,18 @@ def main():
     """Login App"""
 
     st.sidebar.title("LogIn")
-    # img=Image.open('assets/images/logo.png')
-    # st.image(img,width=90)
-    # st.title("Virtual Immersion Scorer")
+    img=Image.open('assets/images/logo.png')
+    st.image(img,width=100)
+    st.title("Virtual Immersion Scorer")
     
-    title_container = st.container()
-    col1, col2 = st.columns([1, 20])
-    image = Image.open('assets/images/logo.png')
-    with title_container:
-        with col1:
-            st.image(image, width=64)
-        with col2:
-            st.title("Virtual Immersion Scorer")
+    # title_container = st.container()
+    # col1, col2 = st.columns([1, 20])
+    # image = Image.open('assets/images/logo.png')
+    # with title_container:
+    #     with col1:
+    #         st.image(image, width=100)
+    #     with col2:
+    #         st.title("Virtual Immersion Scorer")
 
 
     username = st.sidebar.text_input("User Name", key="username")
