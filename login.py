@@ -9,7 +9,8 @@ import streamlit as st
 # from keras.preprocessing.image import img_to_array
 from face_detector import detect_face
 from eye_tracking import eye_direction
-from head_pose_estimation import head_pose 
+from head_pose_estimation import head_pose
+from PIL import Image 
 # from face_landmarks import get_landmark_model, detect_marks
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 import mediapipe as mp
@@ -26,8 +27,8 @@ with open('static/css/style.css') as f:
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
-  #password="Ka$560037KA"
-  password="root"
+  password="Ka$560037KA"
+#   password="root"
   #password="Uk@336207"
 )
 
@@ -102,6 +103,7 @@ class VideoTransformer(VideoTransformerBase):
         '''
             Get Eye Direction
         '''
+        #image=frame.copy()
         #eye_direction = eye_direction(image)
         #cv.putText(image, eye_direction, (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         '''
@@ -132,7 +134,7 @@ class VideoTransformer(VideoTransformerBase):
                 
         cv.circle(image, center_coordinates, radius, color, thickness)
         #cv2.putText(image, state, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
+        #cv.putText(image, eye_direction, (20,20), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         #if text != "Forward": print(text)
         self.some_value = state
         return image
@@ -175,7 +177,19 @@ def main():
     """Login App"""
 
     st.sidebar.title("LogIn")
-    st.title("Virtual Immersion Scorer")
+    # img=Image.open('assets/images/logo.png')
+    # st.image(img,width=90)
+    # st.title("Virtual Immersion Scorer")
+    
+    title_container = st.container()
+    col1, col2 = st.columns([1, 20])
+    image = Image.open('assets/images/logo.png')
+    with title_container:
+        with col1:
+            st.image(image, width=64)
+        with col2:
+            st.title("Virtual Immersion Scorer")
+
 
     username = st.sidebar.text_input("User Name", key="username")
     password = st.sidebar.text_input("Password",type='password', key="password")
@@ -184,10 +198,10 @@ def main():
         if st.button("Logout", on_click=clear_form):
             st.markdown("""
             <style>
-            .css-17eq0hr, .css-1iyw2u1 {
+            .css-zbg2rx, .css-ex7byz {
                     display: true;
                 }
-            .css-qbe2hs {
+            .css-1cpxqw2 {
                 display: none;
             }
             </style>
@@ -195,16 +209,17 @@ def main():
         else:
             st.markdown("""
             <style>
-            .css-17eq0hr, .css-1iyw2u1 {
+            .css-zbg2rx, .css-ex7byz {
                     display: none;
                 }
-            .css-qbe2hs {
+            .css-1cpxqw2 {
                 position: fixed;
                 top: 2%;
                 right: 2%;
             }
             </style>
             """, unsafe_allow_html=True)
+        
 
         create_usertable()
         hashed_pswd = make_hashes(password)
@@ -220,7 +235,7 @@ def main():
 
             print("###############",username,"###############")
 
-            st.title("Real Time Face Emotion Detection Application")
+            # st.title("Real Time Face Emotion Detection Application")
             emotion_count = {'Focused': 0, 'Distracted': 0}
             if "emotion_count" not in st.session_state:
                 st.session_state.emotion_count = emotion_count
