@@ -11,6 +11,7 @@ from face_detector import detect_face
 from eye_tracking import eye_direction
 from head_pose_estimation import head_pose
 from eye_aspect_ratio import eye_aspect_ratio
+from lip_distance import lip_distance
 from PIL import Image 
 # from face_landmarks import get_landmark_model, detect_marks
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
@@ -20,6 +21,8 @@ import subprocess
 import hashlib
 import mysql.connector
 import datetime
+
+from lip_distance import lip_distance
 
 with open('static/css/style.css') as f:
     st.markdown(f'<style>{f.read()}</style>',unsafe_allow_html=True)
@@ -113,6 +116,12 @@ class VideoTransformer(VideoTransformerBase):
         eye_state = eye_aspect_ratio(image)
         
         '''
+            Lip Distance
+        '''
+        image = frame.copy()
+        lip_state = lip_distance(image)
+        
+        '''
             Head Pose Estimation
         '''
         focused = "Focused"
@@ -136,8 +145,9 @@ class VideoTransformer(VideoTransformerBase):
         
                 
         cv.circle(frame, center_coordinates, radius, color, thickness)
-        cv.putText(frame, direction, (30, 60), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        cv.putText(frame, eye_state, (200,300), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv.putText(frame, "head state "+ direction, (30, 60), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        cv.putText(frame, "eye state "+eye_state, (30,80), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+        cv.putText(frame, "lip state "+lip_state, (30,100), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
         self.some_value = state
         
         return frame
