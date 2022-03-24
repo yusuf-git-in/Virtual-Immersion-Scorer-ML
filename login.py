@@ -10,10 +10,10 @@ import streamlit as st
 from face_detector import detect_face
 from eye_tracking import eye_direction
 from head_pose_estimation import head_pose
+from eye_aspect_ratio import eye_aspect_ratio
 from PIL import Image 
 # from face_landmarks import get_landmark_model, detect_marks
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
-import mediapipe as mp
 import streamlit_authenticator as stauth
 import subprocess
 
@@ -28,8 +28,8 @@ mydb = mysql.connector.connect(
   host="localhost",
   user="root",
   #password="Ka$560037KA"
-#   password="root"
-  password="Uk@336207"
+  password="root"
+  #password="Uk@336207"
 )
 
 print(mydb)
@@ -107,6 +107,12 @@ class VideoTransformer(VideoTransformerBase):
         direction = eye_direction(image)
 
         '''
+            Eye Aspect Ratio
+        '''
+        image = frame.copy()
+        eye_state = eye_aspect_ratio(image)
+        
+        '''
             Head Pose Estimation
         '''
         focused = "Focused"
@@ -131,6 +137,7 @@ class VideoTransformer(VideoTransformerBase):
                 
         cv.circle(frame, center_coordinates, radius, color, thickness)
         cv.putText(frame, direction, (30, 60), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv.putText(frame, eye_state, (200,300), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         self.some_value = state
         
         return frame
