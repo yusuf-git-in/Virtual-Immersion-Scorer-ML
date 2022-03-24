@@ -27,8 +27,8 @@ with open('static/css/style.css') as f:
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
-  password="Ka$560037KA"
-#   password="root"
+  #password="Ka$560037KA"
+  password="root"
   #password="Uk@336207"
 )
 
@@ -89,23 +89,23 @@ class VideoTransformer(VideoTransformerBase):
         #     cv2.putText(img, output, label_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         #img = cv2.imread('trial.png')
         
-        image = frame
+        
         '''
             Detect Face
         '''
+        image = frame.copy()
         success = detect_face(image)
         self.success = success
         if not success :
-            cv.putText(image, "Cannot Find Face", (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            return image
+            cv.putText(frame, "Cannot Find Face", (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            return frame
               
-        #cv.putText(image, "FOund", (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         '''
             Get Eye Direction
         '''
-        #image=frame.copy()
-        #eye_direction = eye_direction(image)
-        #cv.putText(image, eye_direction, (20,40), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        image = frame.copy()
+        direction = eye_direction(image)
+
         '''
             Head Pose Estimation
         '''
@@ -118,26 +118,22 @@ class VideoTransformer(VideoTransformerBase):
         else :
             state = distracted
 
-        # Center coordinates
         center_coordinates = (20, 20)
-                
-        # Radius of circle
         radius = 5
-                
-        # Blue color in BGR
+        thickness = -1
+        
         if(state == focused):
             color = (0, 255, 0)
         else: 
             color = (0, 0, 255)
 
-        thickness = -1
+        
                 
-        cv.circle(image, center_coordinates, radius, color, thickness)
-        #cv2.putText(image, state, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        #cv.putText(image, eye_direction, (20,20), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        #if text != "Forward": print(text)
+        cv.circle(frame, center_coordinates, radius, color, thickness)
+        cv.putText(frame, direction, (30, 60), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         self.some_value = state
-        return image
+        
+        return frame
 
 
 def make_hashes(password):
