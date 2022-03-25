@@ -1,5 +1,5 @@
 numpy
-streamlit
+streamlit==1.7.0
 keras
 opencv-contrib-python-headless
 tensorflow-cpu

@@ -18,7 +18,7 @@
 }
 
 /* sidebar-button-div */
-.st-d6 {
+.st-d6:nth-child(1) {
   position: absolute;
   background-color: #f0f2f6;
   width: 0em;
@@ -27,12 +27,11 @@
   float: left;
   line-height: 3em;
   padding: 0;
-  /* margin-left: 20%; */
   align-items: center;
 }
 
 /* sidebar-button-checkbox */
-.st-cx {
+.st-cx:nth-child(1) {
   position: absolute;
   display: none;
   color: #fff !important;
@@ -41,7 +40,7 @@
 }
 
 /* login-button */
-.css-1djdyxw {
+.css-1djdyxw:nth-child(1) {
   background-color: #fff;
   color: black;
   font-weight: bold;
@@ -52,10 +51,10 @@
   line-height: 3em;
   width: 8em;
   height: 3em;
-  margin: 30px 0;
+  margin-top: 30px;
   padding: 0 40px;
 }
-.css-1djdyxw:hover {
+.css-1djdyxw:hover:nth-child(1) {
   color: #f94144;
   border-radius: 4px;
   border: 1px solid #f94144;
@@ -87,3 +86,9 @@
   top: 120px;
   right: 100px;
 }
+
+/* Participate_cbx */
+/* .stCheckbox:nth-child(2) {
+  position: relative;
+  left: 100px;
+} */

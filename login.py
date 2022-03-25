@@ -2,6 +2,7 @@ from multiprocessing import Value
 import cv2 as cv
 from time import time, sleep
 from matplotlib import use
+from mysqlx import Result
 from nbformat import read
 import streamlit as st
 # from tensorflow import keras
@@ -16,6 +17,7 @@ from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 import mediapipe as mp
 import streamlit_authenticator as stauth
 import subprocess
+import streamlit.components.v1 as components
 
 import hashlib
 import mysql.connector
@@ -54,7 +56,7 @@ cursor.execute("use immersion_scorer_db")
 # try:
 #     face_cascade = cv.CascadeClassifier('haarcascade_frontalface_default.xml')
 # except Exception:
-#     st.write("Error loading cascade classifiers")
+#     st.write("Error loading cascadechkClicked classifiers")
     
     
 # emotion_count = {'Focused': 0, 'Distracted': 0}
@@ -168,6 +170,7 @@ def clear_form():
     st.session_state["username"] = ""
     st.session_state["password"] = ""
     st.session_state["loggedIn"] = False
+    st.session_state["participate"] = False
 
 def main():
     """Login App"""
@@ -233,33 +236,107 @@ def main():
 
             # st.title("Real Time Face Emotion Detection Application")
             emotion_count = {'Focused': 0, 'Distracted': 0}
+            chkClicked = False
+            handRaisedCount = 0
+
+
             if "emotion_count" not in st.session_state:
                 st.session_state.emotion_count = emotion_count
+
+            if "chkStClicked" not in st.session_state:
+                st.session_state.chkStClicked = chkClicked
+
+            if "raisedCnt" not in st.session_state:
+                st.session_state.raisedCnt = handRaisedCount
 
             st.header("Webcam Live Feed")
             st.write("Click on start to use webcam and detect your face emotion")
             ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer, media_stream_constraints={"video": True, "audio": False})
 
+            participateCbx = st.checkbox(label="Participate", key="participate")
+            components.html("""
+                <script>
+                const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
+                checkBxText[1].style.position = 'relative'
+                checkBxText[1].style.paddingRight = '120px'
+                </script>
+                """)
             logtxtbox = st.empty()
+            checked = st.empty()
             while ctx.video_processor:
                 current_time=datetime.datetime.now()
                 duration=(current_time-first_time).seconds
                 print()
                 # updates only if face found
                 if first_time==current_time or duration==2:
-                    if ctx.video_processor.success:
+                    if ctx.video_processor.success and not participateCbx:
                         emotion_count[ctx.video_processor.some_value] += 1
+                    
                     logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
                         +str(emotion_count['Focused'])+","
                         +str(emotion_count['Distracted']))
                     print(ctx.video_processor.some_value, emotion_count)
                     st.session_state.emotion_count = emotion_count
+
                     first_time=current_time
                     current_time=datetime.datetime.now()
+
+                if participateCbx and (not chkClicked):
+                    chkClicked = True
+                    handRaisedCount = st.session_state.raisedCnt
+                    handRaisedCount += 1
+
+                    print("Hand Raised in if", handRaisedCount)
+
+                    st.session_state.raisedCnt = handRaisedCount
+                    st.session_state.chkStClicked = chkClicked
+
+                    checked.write('Hand Raised:: Count: '+str(handRaisedCount))
+                    sleep(2)
+
+                    components.html("""
+                        <script>
+                        const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
+                        checkBxText[1].style.border = '1px solid #f94144'
+                        </script>
+                        """)
+                elif (not participateCbx) and chkClicked:
+                    chkClicked = False
+
+                    print("Hand lowered in elif", handRaisedCount)
+
+                    st.session_state.raisedCnt = handRaisedCount
+                    st.session_state.chkStClicked = chkClicked
+
+                    checked.write('Hand Lowered:: Count: '+str(handRaisedCount))
+                    sleep(2)
+
+                    components.html("""
+                        <script>
+                        const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
+                        checkBxText[1].style.border = '1px solid black'
+                        </script>
+                        """)
+
+                # print("Hand Raised cnt before ss", handRaisedCount)
+                
+                chkClicked = st.session_state.chkStClicked
+                handRaisedCount = st.session_state.raisedCnt
+                st.session_state.raisedCnt = handRaisedCount
+
+                # print("Hand Raised cnt after ss", handRaisedCount)
+
+                emotion_count = st.session_state.emotion_count
+                st.session_state.emotion_count = emotion_count
                 
             emotion_count = st.session_state.emotion_count
-            print("End:",emotion_count)
+            handRaisedCount = st.session_state.raisedCnt
+
+            # Result stored
+            print("End:", emotion_count, "--Hand Raised:", handRaisedCount)
+
             st.session_state.emotion_count = {'Focused': 0, 'Distracted': 0}
+            st.session_state.raisedCnt = 0
 
             # st.success("Logged In as {}".format(username))
 
