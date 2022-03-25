@@ -39,7 +39,7 @@ def calc_delta_new(head_pose, eye_asp_ratio, eye_dir, lip_dist, emotion):
         eye_asp_ratio (float): _description_
         eye_dir (int): in degrees
         lip_dist (float): _description_
-
+        emotion (string): _description_
     Returns:
         float: engagement level %
     """
@@ -51,7 +51,7 @@ def calc_delta_new(head_pose, eye_asp_ratio, eye_dir, lip_dist, emotion):
     else:
         h = 0
 
-    if eye_dir == "center":
+    if eye_dir == "forward":
         ed = 1
     else:
         ed = 1 - 0.5
@@ -68,7 +68,7 @@ def calc_delta_new(head_pose, eye_asp_ratio, eye_dir, lip_dist, emotion):
     else:
         ld = 0
 
-    val = h * ed * (e - lip_dist + (emotion * 2.5))
+    val = h * ed * (e - ld + (arr[emotion] * 2.5))
     
     return val
 

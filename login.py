@@ -13,16 +13,15 @@ from head_pose_estimation import head_pose
 from eye_aspect_ratio import eye_aspect_ratio
 from lip_distance import lip_distance
 from PIL import Image 
-# from face_landmarks import get_landmark_model, detect_marks
+#from face_landmarks import get_landmark_model, detect_marks
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 import streamlit_authenticator as stauth
 import subprocess
-
+from engagement import lip
 import hashlib
 import mysql.connector
 import datetime
 
-from lip_distance import lip_distance
 
 with open('static/css/style.css') as f:
     st.markdown(f'<style>{f.read()}</style>',unsafe_allow_html=True)
@@ -62,20 +61,17 @@ cursor.execute("use immersion_scorer_db")
     
 # emotion_count = {'Focused': 0, 'Distracted': 0}
 
-from engagement.lip import calc_delta_new
 
 class VideoTransformer(VideoTransformerBase):
     def __init__(self) -> None:
         super().__init__()
         self.some_value = "Focused" 
         self.success = True
-
-        self.direction = None
-        self.eye_state = None
-        self.lip_state = None
-        self.pose = None
-
-        self.engagement_level = None
+        self.direction = 0
+        self.eye_state = 0
+        self.lip_state = 0
+        self.pose = 0
+        self.engagement_level = 0
 
 
 
@@ -135,10 +131,12 @@ class VideoTransformer(VideoTransformerBase):
         '''
             Head Pose Estimation
         '''
+        image = frame.copy()
         focused = "Focused"
         distracted = "Distracted"
         state = focused
         self.pose = head_pose(image)
+        
         if self.pose == 'forward' :
             state = focused
         else :
@@ -156,14 +154,13 @@ class VideoTransformer(VideoTransformerBase):
         
                 
         cv.circle(frame, center_coordinates, radius, color, thickness)
-        cv.putText(frame, "head state "+ self.direction, (30, 60), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-        cv.putText(frame, "eye state "+self.eye_state, (30,80), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
-        cv.putText(frame, "lip state "+self.lip_state, (30,100), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        cv.putText(frame, "head state "+ self.pose, (30, 60), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        cv.putText(frame, "eye state "+ self.eye_state, (30,80), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+        cv.putText(frame, "lip state "+ self.lip_state, (30,100), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        cv.putText(frame, "eye direction "+ self.direction, (30,140), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
         self.some_value = state
-        
-        self.engagement_level = calc_delta_new(self.pose, self.eye_state, self.direction, self.lip_state, "Neutral")
-
-        cv.putText(frame, "engagement: "+self.engagement_level, (30,400), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        self.engagement_level = lip.calc_delta_new(self.pose, self.eye_state, self.direction, self.lip_state, "Neutral")
+        cv.putText(frame, "engagement: "+ str(self.engagement_level), (30, 120), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
         return frame
 
@@ -264,10 +261,14 @@ def main():
             print("###############",username,"###############")
 
             # st.title("Real Time Face Emotion Detection Application")
-            emotion_count = {'Focused': 0, 'Distracted': 0}
-            if "emotion_count" not in st.session_state:
-                st.session_state.emotion_count = emotion_count
+            #emotion_count = {'Focused': 0, 'Distracted': 0}
+            engagement_level = 0
+            # if "emotion_count" not in st.session_state:
+            #     st.session_state.emotion_count = emotion_count
 
+            if engagement_level not in st.session_state:
+                st.session_state.engagement_level = engagement_level
+            
             st.header("Webcam Live Feed")
             st.write("Click on start to use webcam and detect your face emotion")
             ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer, media_stream_constraints={"video": True, "audio": False})
@@ -278,20 +279,28 @@ def main():
                 duration=(current_time-first_time).seconds
                 print()
                 # updates only if face found
-                if first_time==current_time or duration==2:
-                    if ctx.video_processor.success:
-                        emotion_count[ctx.video_processor.some_value] += 1
-                    logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
-                        +str(emotion_count['Focused'])+","
-                        +str(emotion_count['Distracted']))
-                    print(ctx.video_processor.some_value, emotion_count)
-                    st.session_state.emotion_count = emotion_count
+                if first_time == current_time or duration == 2:
+                    # if ctx.video_processor.success:
+                    #     emotion_count[ctx.video_processor.some_value] += 1
+                        
+                    # logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
+                    #     +str(emotion_count['Focused'])+","
+                    #     +str(emotion_count['Distracted']))
+                    logtxtbox.write(str(ctx.video_processor.engagement_level) + "\n" +str(engagement_level))
+                    # print(ctx.video_processor.some_value, emotion_count)
+                    # st.session_state.emotion_count = emotion_count
+                    print(ctx.video_processor.engagement_level, engagement_level)
+                    st.session_state.engagement_level = engagement_level
                     first_time=current_time
                     current_time=datetime.datetime.now()
                 
-            emotion_count = st.session_state.emotion_count
-            print("End:",emotion_count)
-            st.session_state.emotion_count = {'Focused': 0, 'Distracted': 0}
+            # emotion_count = st.session_state.emotion_count
+            # print("End:",emotion_count)
+            # st.session_state.emotion_count = {'Focused': 0, 'Distracted': 0}
+
+            engagement_level = st.session_state.engagement_level
+            print("End:",engagement_level)
+            st.session_state.engagement_level = 0
 
             # st.success("Logged In as {}".format(username))
 
