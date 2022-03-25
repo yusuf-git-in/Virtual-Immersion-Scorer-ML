@@ -62,11 +62,22 @@ cursor.execute("use immersion_scorer_db")
     
 # emotion_count = {'Focused': 0, 'Distracted': 0}
 
+from engagement.lip import calc_delta_new
+
 class VideoTransformer(VideoTransformerBase):
     def __init__(self) -> None:
         super().__init__()
         self.some_value = "Focused" 
         self.success = True
+
+        self.direction = None
+        self.eye_state = None
+        self.lip_state = None
+        self.pose = None
+
+        self.engagement_level = None
+
+
 
     def transform(self, frame):
         frame = frame.to_ndarray(format="bgr24")
@@ -107,19 +118,19 @@ class VideoTransformer(VideoTransformerBase):
             Get Eye Direction
         '''
         image = frame.copy()
-        direction = eye_direction(image)
+        self.direction = eye_direction(image)
 
         '''
             Eye Aspect Ratio
         '''
         image = frame.copy()
-        eye_state = eye_aspect_ratio(image)
+        self.eye_state = eye_aspect_ratio(image)
         
         '''
             Lip Distance
         '''
         image = frame.copy()
-        lip_state = lip_distance(image)
+        self.lip_state = lip_distance(image)
         
         '''
             Head Pose Estimation
@@ -127,8 +138,8 @@ class VideoTransformer(VideoTransformerBase):
         focused = "Focused"
         distracted = "Distracted"
         state = focused
-        pose = head_pose(image)
-        if pose == 'forward' :
+        self.pose = head_pose(image)
+        if self.pose == 'forward' :
             state = focused
         else :
             state = distracted
@@ -145,11 +156,15 @@ class VideoTransformer(VideoTransformerBase):
         
                 
         cv.circle(frame, center_coordinates, radius, color, thickness)
-        cv.putText(frame, "head state "+ direction, (30, 60), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-        cv.putText(frame, "eye state "+eye_state, (30,80), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
-        cv.putText(frame, "lip state "+lip_state, (30,100), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        cv.putText(frame, "head state "+ self.direction, (30, 60), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        cv.putText(frame, "eye state "+self.eye_state, (30,80), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+        cv.putText(frame, "lip state "+self.lip_state, (30,100), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
         self.some_value = state
         
+        self.engagement_level = calc_delta_new(self.pose, self.eye_state, self.direction, self.lip_state, "Neutral")
+
+        cv.putText(frame, "engagement: "+self.engagement_level, (30,400), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+
         return frame
 
 

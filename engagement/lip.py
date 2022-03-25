@@ -60,6 +60,13 @@ def calc_delta_new(head_pose, eye_asp_ratio, eye_dir, lip_dist, emotion):
         e = 100
     else:
         e = 25
+    
+    if lip_dist == 'talking':
+        ld = 35
+    elif lip_dist == 'yawning':
+        ld = 25
+    else:
+        ld = 0
 
     val = h * ed * (e - lip_dist + (emotion * 2.5))
     
