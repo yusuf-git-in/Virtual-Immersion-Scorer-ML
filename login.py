@@ -249,8 +249,11 @@ def main():
         create_usertable()
         hashed_pswd = make_hashes(password)
 
+        courseList = ["","Course1","Course2"]
+        courseCBx = st.selectbox(label="Choose course",options=courseList)
+
         result = login_user(username,check_hashes(password,hashed_pswd))
-        if result or True:
+        if (result or True) and courseCBx:
             first_time=datetime.datetime.now()
             current_time=first_time
 
@@ -269,12 +272,6 @@ def main():
             if engagement_level not in st.session_state:
                 st.session_state.engagement_level = engagement_level
             
-            if "chkStClicked" not in st.session_state:
-                st.session_state.chkStClicked = chkClicked
-
-            if "raisedCnt" not in st.session_state:
-                st.session_state.raisedCnt = handRaisedCount
-
             if "chkStClicked" not in st.session_state:
                 st.session_state.chkStClicked = chkClicked
 
@@ -412,8 +409,8 @@ def main():
             #     user_result = view_all_users()
             #     clean_db = pd.DataFrame(user_result,columns=["Username","Password"])
             #     st.dataframe(clean_db)
-        else:
-            st.warning("Incorrect Username/Password")
+        # else:
+        #     st.warning("Incorrect Username/Password")
 
 
 if __name__ == '__main__':

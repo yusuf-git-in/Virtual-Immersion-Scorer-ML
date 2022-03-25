@@ -75,20 +75,14 @@
   color: black;
 }
 
-/* Logo */
-/* .css-css-1v0mbdj > img {
-  position: relative;
-  top: 10px;
-  right: 50px;
-} */
+/* Course Drop down */
+.row-widget > label {
+  color: black;
+}
+
+/* Image position */
 .css-1v0mbdj {
   position: relative;
   top: 120px;
   right: 100px;
 }
-
-/* Participate_cbx */
-/* .stCheckbox:nth-child(2) {
-  position: relative;
-  left: 100px;
-} */
