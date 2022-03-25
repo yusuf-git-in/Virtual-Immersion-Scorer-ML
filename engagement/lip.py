@@ -31,6 +31,39 @@ arr = {
 "Surprise": 3
 }
 
+def calc_delta_new(head_pose, eye_asp_ratio, eye_dir, lip_dist, emotion):
+    """_summary_
+
+    Args:
+        head_pose (int): in degrees
+        eye_asp_ratio (float): _description_
+        eye_dir (int): in degrees
+        lip_dist (float): _description_
+
+    Returns:
+        float: engagement level %
+    """
+    
+    val = 0
+    
+    if head_pose == 'forward':
+        h = 1
+    else:
+        h = 0
+
+    if eye_dir == "center":
+        ed = 1
+    else:
+        ed = 1 - 0.5
+
+    if eye_asp_ratio == 'active':
+        e = 100
+    else:
+        e = 25
+
+    val = h * ed * (e - lip_dist + (emotion * 2.5))
+    
+    return val
 
 def calc_delta(head_pose, eye_asp_ratio, eye_dir, lip_dist, emotion):
     """_summary_
@@ -47,20 +80,35 @@ def calc_delta(head_pose, eye_asp_ratio, eye_dir, lip_dist, emotion):
     
     val = 0
     
-    if -20<= head_pose <= 20:
+    # if -20<= head_pose <= 20:
+    #     h = 1
+    # else:
+    #     h = 0
+
+    if head_pose == 'forward':
         h = 1
     else:
         h = 0
-    
-    if eye_asp_ratio > 0.25:
-        e = 100
-    else:
-        e = eye_asp_ratio/0.25 * 100
-    
-    if -20<= eye_dir <= 20:
+
+    if eye_dir == "center":
         ed = 1
     else:
-        ed = 1 - abs(eye_dir/360)
+        ed = 1 - 0.5
+
+    if eye_asp_ratio == 'active':
+        e = 100
+    else:
+        e = 25
+
+    # if eye_asp_ratio > 0.25:
+    #     e = 100
+    # else:
+    #     e = eye_asp_ratio/0.25 * 100
+    
+    # if -20<= eye_dir <= 20:
+    #     ed = 1
+    # else:
+    #     ed = 1 - abs(eye_dir/360)
 
     val = h * ed * (e - lip_dist + (emotion * 2.5))
     
