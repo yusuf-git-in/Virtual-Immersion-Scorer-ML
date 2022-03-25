@@ -2,6 +2,7 @@ from multiprocessing import Value
 import cv2 as cv
 from time import time, sleep
 from matplotlib import use
+from mysqlx import Result
 from nbformat import read
 import streamlit as st
 # from tensorflow import keras
@@ -274,6 +275,12 @@ def main():
             if "raisedCnt" not in st.session_state:
                 st.session_state.raisedCnt = handRaisedCount
 
+            if "chkStClicked" not in st.session_state:
+                st.session_state.chkStClicked = chkClicked
+
+            if "raisedCnt" not in st.session_state:
+                st.session_state.raisedCnt = handRaisedCount
+
             st.header("Webcam Live Feed")
             st.write("Click on start to use webcam and detect your face emotion")
             ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer, media_stream_constraints={"video": True, "audio": False})
@@ -307,6 +314,44 @@ def main():
                     st.session_state.engagement_level = engagement_level
                     first_time=current_time
                     current_time=datetime.datetime.now()
+
+                if participateCbx and (not chkClicked):
+                    chkClicked = True
+                    handRaisedCount = st.session_state.raisedCnt
+                    handRaisedCount += 1
+
+                    st.session_state.raisedCnt = handRaisedCount
+                    st.session_state.chkStClicked = chkClicked
+
+                    checked.write('Hand Raised:: Count: '+str(handRaisedCount))
+
+                    components.html("""
+                        <script>
+                        const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
+                        checkBxText[1].style.border = '1px solid #f94144'
+                        </script>
+                        """)
+                elif (not participateCbx) and chkClicked:
+                    chkClicked = False
+
+                    st.session_state.raisedCnt = handRaisedCount
+                    st.session_state.chkStClicked = chkClicked
+
+                    checked.write('Hand Lowered:: Count: '+str(handRaisedCount))
+
+                    components.html("""
+                        <script>
+                        const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
+                        checkBxText[1].style.border = '1px solid black'
+                        </script>
+                        """)
+                
+                chkClicked = st.session_state.chkStClicked
+                handRaisedCount = st.session_state.raisedCnt
+                st.session_state.raisedCnt = handRaisedCount
+
+                engagement_level = st.session_state.engagement_level
+                st.session_state.engagement_level = engagement_level
                 
                 if participateCbx and (not chkClicked):
                     chkClicked = True
