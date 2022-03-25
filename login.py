@@ -234,7 +234,6 @@ def main():
 
             print("###############",username,"###############")
 
-            # st.title("Real Time Face Emotion Detection Application")
             emotion_count = {'Focused': 0, 'Distracted': 0}
             chkClicked = False
             handRaisedCount = 0
@@ -286,13 +285,10 @@ def main():
                     handRaisedCount = st.session_state.raisedCnt
                     handRaisedCount += 1
 
-                    print("Hand Raised in if", handRaisedCount)
-
                     st.session_state.raisedCnt = handRaisedCount
                     st.session_state.chkStClicked = chkClicked
 
                     checked.write('Hand Raised:: Count: '+str(handRaisedCount))
-                    sleep(2)
 
                     components.html("""
                         <script>
@@ -303,13 +299,10 @@ def main():
                 elif (not participateCbx) and chkClicked:
                     chkClicked = False
 
-                    print("Hand lowered in elif", handRaisedCount)
-
                     st.session_state.raisedCnt = handRaisedCount
                     st.session_state.chkStClicked = chkClicked
 
                     checked.write('Hand Lowered:: Count: '+str(handRaisedCount))
-                    sleep(2)
 
                     components.html("""
                         <script>
@@ -317,14 +310,10 @@ def main():
                         checkBxText[1].style.border = '1px solid black'
                         </script>
                         """)
-
-                # print("Hand Raised cnt before ss", handRaisedCount)
                 
                 chkClicked = st.session_state.chkStClicked
                 handRaisedCount = st.session_state.raisedCnt
                 st.session_state.raisedCnt = handRaisedCount
-
-                # print("Hand Raised cnt after ss", handRaisedCount)
 
                 emotion_count = st.session_state.emotion_count
                 st.session_state.emotion_count = emotion_count
