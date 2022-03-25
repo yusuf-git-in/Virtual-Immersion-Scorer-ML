@@ -350,8 +350,8 @@ def main():
                 handRaisedCount = st.session_state.raisedCnt
                 st.session_state.raisedCnt = handRaisedCount
 
-                emotion_count = st.session_state.emotion_count
-                st.session_state.emotion_count = emotion_count
+                engagement_level = st.session_state.engagement_level
+                st.session_state.engagement_level = engagement_level
                 
                 if participateCbx and (not chkClicked):
                     chkClicked = True
