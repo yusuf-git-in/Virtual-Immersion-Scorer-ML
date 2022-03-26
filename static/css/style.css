@@ -1,3 +1,19 @@
+#navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #577590;
+  border-radius: 0 0 30px 30px;
+  color: white;
+  text-align: center;
+  z-index: 1;
+
+  /*Define a height for NavBar*/
+  height: 80px;
+  transition: 0.5s;
+}
+
 /* sidebar */
 .css-zbg2rx {
   background-color: #577590;
@@ -68,6 +84,16 @@
 /* Body */
 .main {
   background-color: #dbe9ee;
+}
+
+h1[id^="hi"] {
+  position: fixed;
+  font-size: 20px;
+  color: white;
+  left: 2%;
+  top: 0%;
+  font-weight: bold;
+  z-index: 2;
 }
 
 /* Title */

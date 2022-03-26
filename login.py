@@ -25,6 +25,14 @@ import mysql.connector
 import datetime
 
 
+img = Image.open('assets/images/logo.png')
+st.set_page_config(page_title="Mimiric: A tool for ML data",
+                   page_icon=img,
+                #    layout='centered',
+                   initial_sidebar_state='auto')
+st.markdown(""" 
+<nav id="navbar">""",unsafe_allow_html=True)
+
 with open('static/css/style.css') as f:
     st.markdown(f'<style>{f.read()}</style>',unsafe_allow_html=True)
 
@@ -241,6 +249,7 @@ def main():
                 position: fixed;
                 top: 2%;
                 right: 2%;
+                z-index: 2;
             }
             </style>
             """, unsafe_allow_html=True)
@@ -253,6 +262,8 @@ def main():
         courseCBx = st.selectbox(label="Choose course",options=courseList)
 
         result = login_user(username,check_hashes(password,hashed_pswd))
+        if result or True:
+            st.title("Hi, "+str(username))
         if (result or True) and courseCBx:
             first_time=datetime.datetime.now()
             current_time=first_time
