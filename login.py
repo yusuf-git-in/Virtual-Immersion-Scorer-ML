@@ -186,7 +186,7 @@ def create_usertable():
 
 
 def add_userdata(sid,username,password):
-	cursor.execute('INSERT INTO student(sid,name,password) VALUES (?,?,?)',(sid,username,password))
+	cursor.execute('INSERT INTO student(s_id,name,password) VALUES (?,?,?)',(sid,username,password))
 	cursor.commit()
 
 def login_user(username,password):
@@ -199,6 +199,14 @@ def view_all_users():
 	cursor.execute('SELECT * FROM student')
 	data = cursor.fetchall()
 	return data
+
+def get_courses():
+    cursor.execute(f'SELECT name, c_id FROM course')
+    courses = cursor.fetchall()
+    dict = {}
+    for (course,id) in courses:
+        dict[course] = id
+    return dict, dict.keys()
 
 def clear_form():
     st.session_state["username"] = ""
@@ -285,7 +293,9 @@ def main():
                 </style>
                 """, unsafe_allow_html=True)
 
-            courseList = ["","Course1","Course2"]
+            courseList = [""]
+            coursesDict, courses = get_courses()
+            courseList.extend(courses)
             courseCBx = st.selectbox(label="Choose course",options=courseList)
             if courseCBx:
                 first_time=datetime.datetime.now()
