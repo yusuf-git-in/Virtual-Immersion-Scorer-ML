@@ -177,26 +177,26 @@ def make_hashes(password):
 
 def check_hashes(password,hashed_text):
 	if make_hashes(password) == hashed_text:
-		return hashed_text
+		return password
 	return False
 
 # DB  Functions
 def create_usertable():
-	cursor.execute('CREATE TABLE IF NOT EXISTS student_table(studentId INT AUTO_INCREMENT PRIMARY KEY,username VARCHAR(20),password VARCHAR(20))')
+	cursor.execute('CREATE TABLE IF NOT EXISTS student(s_id INT NOT NULL PRIMARY KEY,name VARCHAR(255),password VARCHAR(255))')
 
 
-def add_userdata(username,password):
-	cursor.execute('INSERT INTO student_table(username,password) VALUES (?,?)',(username,password))
+def add_userdata(sid,username,password):
+	cursor.execute('INSERT INTO student(sid,name,password) VALUES (?,?,?)',(sid,username,password))
 	cursor.commit()
 
 def login_user(username,password):
-	cursor.execute('SELECT * FROM student_table WHERE username = %s AND password = %s',(username,password))
+	cursor.execute('SELECT * FROM student WHERE name = %s AND password = %s',(username,password))
 	data = cursor.fetchall()
 	return data
 
 
 def view_all_users():
-	cursor.execute('SELECT * FROM student_table')
+	cursor.execute('SELECT * FROM student')
 	data = cursor.fetchall()
 	return data
 
@@ -204,6 +204,7 @@ def clear_form():
     st.session_state["username"] = ""
     st.session_state["password"] = ""
     st.session_state["loggedIn"] = False
+    # st.session_state["sidebarLoginCbx"] = False
     st.session_state["participate"] = False
 
 def main():
@@ -213,215 +214,236 @@ def main():
     img=Image.open('assets/images/logo.png')
     st.image(img,width=100)
     st.title("Virtual Immersion Scorer")
-    
-    # title_container = st.container()
-    # col1, col2 = st.columns([1, 20])
-    # image = Image.open('assets/images/logo.png')
-    # with title_container:
-    #     with col1:
-    #         st.image(image, width=100)
-    #     with col2:
-    #         st.title("Virtual Immersion Scorer")
-
 
     username = st.sidebar.text_input("User Name", key="username")
     password = st.sidebar.text_input("Password",type='password', key="password")
-    if st.sidebar.checkbox("Login", key="loggedIn"):
+    sidebarLoginCbx = st.sidebar.checkbox("Login", key="loggedIn")
+    # if not sidebarLoginCbx in st.session_state:
+    #     st.session_state.sidebarLoginCbx = sidebarLoginCbx
+    if sidebarLoginCbx:
 
-        if st.button("Logout", on_click=clear_form):
-            st.markdown("""
-            <style>
-            .css-zbg2rx, .css-ex7byz {
-                    display: true;
-                }
-            .css-1cpxqw2 {
-                display: none;
-            }
-            </style>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown("""
-            <style>
-            .css-zbg2rx, .css-ex7byz {
-                    display: none;
-                }
-            .css-1cpxqw2 {
-                position: fixed;
-                top: 2%;
-                right: 2%;
-                z-index: 2;
-            }
-            </style>
-            """, unsafe_allow_html=True)
+        # if st.button("Logout", on_click=clear_form):
+        #     st.markdown("""
+        #     <style>
+        #     .css-zbg2rx, .css-ex7byz {
+        #             display: true;
+        #         }
+        #     .css-1cpxqw2 {
+        #         display: none;
+        #     }
+        #     </style>
+        #     """, unsafe_allow_html=True)
+        # else:
+        #     st.markdown("""
+        #     <style>
+        #     .css-zbg2rx, .css-ex7byz {
+        #             display: none;
+        #         }
+        #     .css-1cpxqw2 {
+        #         position: fixed;
+        #         top: 2%;
+        #         right: 2%;
+        #         z-index: 2;
+        #     }
+        #     </style>
+        #     """, unsafe_allow_html=True)
         
 
         create_usertable()
         hashed_pswd = make_hashes(password)
 
-        courseList = ["","Course1","Course2"]
-        courseCBx = st.selectbox(label="Choose course",options=courseList)
-
         result = login_user(username,check_hashes(password,hashed_pswd))
-        if result or True:
+        for res in result:
+            print("$$$$$$$$$$$$$$$$$$$$$$$",res,"$$$$$$$$$$$$$$$$$$$$$$$$$")
+        if len(result)>0:
             st.title("Hi, "+str(username))
-        if (result or True) and courseCBx:
-            first_time=datetime.datetime.now()
-            current_time=first_time
+        if len(result)>0:
 
-            # subprocess.Popen(["streamlit", "run", "app.py"])
+            if st.button("Logout", on_click=clear_form):
+                st.markdown("""
+                <style>
+                .css-zbg2rx, .css-ex7byz {
+                        display: true;
+                    }
+                .css-1cpxqw2 {
+                    display: none;
+                }
+                </style>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown("""
+                <style>
+                .css-zbg2rx, .css-ex7byz {
+                        display: none;
+                    }
+                .css-1cpxqw2 {
+                    position: fixed;
+                    top: 2%;
+                    right: 2%;
+                    z-index: 2;
+                }
+                </style>
+                """, unsafe_allow_html=True)
 
-            print("###############",username,"###############")
+            courseList = ["","Course1","Course2"]
+            courseCBx = st.selectbox(label="Choose course",options=courseList)
+            if courseCBx:
+                first_time=datetime.datetime.now()
+                current_time=first_time
 
-            # st.title("Real Time Face Emotion Detection Application")
-            #emotion_count = {'Focused': 0, 'Distracted': 0}
-            engagement_level = 0
-            chkClicked = False
-            handRaisedCount = 0
-            # if "emotion_count" not in st.session_state:
-            #     st.session_state.emotion_count = emotion_count
+                print("###############",username,"###############")
 
-            if engagement_level not in st.session_state:
-                st.session_state.engagement_level = engagement_level
-            
-            if "chkStClicked" not in st.session_state:
-                st.session_state.chkStClicked = chkClicked
+                # st.title("Real Time Face Emotion Detection Application")
+                #emotion_count = {'Focused': 0, 'Distracted': 0}
+                engagement_level = 0
+                chkClicked = False
+                handRaisedCount = 0
+                # if "emotion_count" not in st.session_state:
+                #     st.session_state.emotion_count = emotion_count
 
-            if "raisedCnt" not in st.session_state:
-                st.session_state.raisedCnt = handRaisedCount
-
-            st.header("Webcam Live Feed")
-            st.write("Click on start to use webcam and detect your face emotion")
-            ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer, media_stream_constraints={"video": True, "audio": False})
-
-            participateCbx = st.checkbox(label="Participate", key="participate")
-            components.html("""
-                <script>
-                const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
-                checkBxText[1].style.position = 'relative'
-                checkBxText[1].style.paddingRight = '120px'
-                </script>
-                """)
-            logtxtbox = st.empty()
-            checked = st.empty()
-            while ctx.video_processor:
-                current_time=datetime.datetime.now()
-                duration=(current_time-first_time).seconds
-                print()
-                # updates only if face found
-                if first_time == current_time or duration == 2:
-                    # if ctx.video_processor.success:
-                    #     emotion_count[ctx.video_processor.some_value] += 1
-                        
-                    # logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
-                    #     +str(emotion_count['Focused'])+","
-                    #     +str(emotion_count['Distracted']))
-                    logtxtbox.write(str(ctx.video_processor.engagement_level) + "\n" +str(engagement_level))
-                    # print(ctx.video_processor.some_value, emotion_count)
-                    # st.session_state.emotion_count = emotion_count
-                    print(ctx.video_processor.engagement_level, engagement_level)
+                if engagement_level not in st.session_state:
                     st.session_state.engagement_level = engagement_level
-                    first_time=current_time
+                
+                if "chkStClicked" not in st.session_state:
+                    st.session_state.chkStClicked = chkClicked
+
+                if "raisedCnt" not in st.session_state:
+                    st.session_state.raisedCnt = handRaisedCount
+
+                st.header("Webcam Live Feed")
+                st.write("Click on start to use webcam and detect your face emotion")
+                ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer, media_stream_constraints={"video": True, "audio": False})
+
+                participateCbx = st.checkbox(label="Participate", key="participate")
+                components.html("""
+                    <script>
+                    const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
+                    checkBxText[1].style.position = 'relative'
+                    checkBxText[1].style.paddingRight = '120px'
+                    </script>
+                    """)
+                logtxtbox = st.empty()
+                checked = st.empty()
+                while ctx.video_processor:
                     current_time=datetime.datetime.now()
+                    duration=(current_time-first_time).seconds
+                    print()
+                    # updates only if face found
+                    if first_time == current_time or duration == 2:
+                        # if ctx.video_processor.success:
+                        #     emotion_count[ctx.video_processor.some_value] += 1
+                            
+                        # logtxtbox.write(str(ctx.video_processor.some_value)+"\n"
+                        #     +str(emotion_count['Focused'])+","
+                        #     +str(emotion_count['Distracted']))
+                        logtxtbox.write(str(ctx.video_processor.engagement_level) + "\n" +str(engagement_level))
+                        # print(ctx.video_processor.some_value, emotion_count)
+                        # st.session_state.emotion_count = emotion_count
+                        print(ctx.video_processor.engagement_level, engagement_level)
+                        st.session_state.engagement_level = engagement_level
+                        first_time=current_time
+                        current_time=datetime.datetime.now()
 
-                if participateCbx and (not chkClicked):
-                    chkClicked = True
+                    if participateCbx and (not chkClicked):
+                        chkClicked = True
+                        handRaisedCount = st.session_state.raisedCnt
+                        handRaisedCount += 1
+
+                        st.session_state.raisedCnt = handRaisedCount
+                        st.session_state.chkStClicked = chkClicked
+
+                        checked.write('Hand Raised:: Count: '+str(handRaisedCount))
+
+                        components.html("""
+                            <script>
+                            const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
+                            checkBxText[1].style.border = '1px solid #f94144'
+                            </script>
+                            """)
+                    elif (not participateCbx) and chkClicked:
+                        chkClicked = False
+
+                        st.session_state.raisedCnt = handRaisedCount
+                        st.session_state.chkStClicked = chkClicked
+
+                        checked.write('Hand Lowered:: Count: '+str(handRaisedCount))
+
+                        components.html("""
+                            <script>
+                            const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
+                            checkBxText[1].style.border = '1px solid black'
+                            </script>
+                            """)
+                    
+                    chkClicked = st.session_state.chkStClicked
                     handRaisedCount = st.session_state.raisedCnt
-                    handRaisedCount += 1
-
                     st.session_state.raisedCnt = handRaisedCount
-                    st.session_state.chkStClicked = chkClicked
 
-                    checked.write('Hand Raised:: Count: '+str(handRaisedCount))
+                    engagement_level = st.session_state.engagement_level
+                    st.session_state.engagement_level = engagement_level
+                    
+                    if participateCbx and (not chkClicked):
+                        chkClicked = True
+                        handRaisedCount = st.session_state.raisedCnt
+                        handRaisedCount += 1
 
-                    components.html("""
-                        <script>
-                        const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
-                        checkBxText[1].style.border = '1px solid #f94144'
-                        </script>
-                        """)
-                elif (not participateCbx) and chkClicked:
-                    chkClicked = False
+                        st.session_state.raisedCnt = handRaisedCount
+                        st.session_state.chkStClicked = chkClicked
 
-                    st.session_state.raisedCnt = handRaisedCount
-                    st.session_state.chkStClicked = chkClicked
+                        checked.write('Hand Raised:: Count: '+str(handRaisedCount))
 
-                    checked.write('Hand Lowered:: Count: '+str(handRaisedCount))
+                        components.html("""
+                            <script>
+                            const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
+                            checkBxText[1].style.border = '1px solid #f94144'
+                            </script>
+                            """)
+                    elif (not participateCbx) and chkClicked:
+                        chkClicked = False
 
-                    components.html("""
-                        <script>
-                        const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
-                        checkBxText[1].style.border = '1px solid black'
-                        </script>
-                        """)
-                
-                chkClicked = st.session_state.chkStClicked
-                handRaisedCount = st.session_state.raisedCnt
-                st.session_state.raisedCnt = handRaisedCount
+                        st.session_state.raisedCnt = handRaisedCount
+                        st.session_state.chkStClicked = chkClicked
 
-                engagement_level = st.session_state.engagement_level
-                st.session_state.engagement_level = engagement_level
-                
-                if participateCbx and (not chkClicked):
-                    chkClicked = True
+                        checked.write('Hand Lowered:: Count: '+str(handRaisedCount))
+
+                        components.html("""
+                            <script>
+                            const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
+                            checkBxText[1].style.border = '1px solid black'
+                            </script>
+                            """)
+                    
+                    chkClicked = st.session_state.chkStClicked
                     handRaisedCount = st.session_state.raisedCnt
-                    handRaisedCount += 1
-
                     st.session_state.raisedCnt = handRaisedCount
-                    st.session_state.chkStClicked = chkClicked
 
-                    checked.write('Hand Raised:: Count: '+str(handRaisedCount))
-
-                    components.html("""
-                        <script>
-                        const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
-                        checkBxText[1].style.border = '1px solid #f94144'
-                        </script>
-                        """)
-                elif (not participateCbx) and chkClicked:
-                    chkClicked = False
-
-                    st.session_state.raisedCnt = handRaisedCount
-                    st.session_state.chkStClicked = chkClicked
-
-                    checked.write('Hand Lowered:: Count: '+str(handRaisedCount))
-
-                    components.html("""
-                        <script>
-                        const checkBxText = window.parent.document.querySelectorAll('.css-1djdyxw')
-                        checkBxText[1].style.border = '1px solid black'
-                        </script>
-                        """)
-                
-                chkClicked = st.session_state.chkStClicked
+                    engagement_level = st.session_state.engagement_level
+                    st.session_state.engagement_level = engagement_level
+                    
+                # emotion_count = st.session_state.emotion_count
+                # print("End:",emotion_count)
+                # st.session_state.emotion_count = {'Focused': 0, 'Distracted': 0}
                 handRaisedCount = st.session_state.raisedCnt
-                st.session_state.raisedCnt = handRaisedCount
-
                 engagement_level = st.session_state.engagement_level
-                st.session_state.engagement_level = engagement_level
-                
-            # emotion_count = st.session_state.emotion_count
-            # print("End:",emotion_count)
-            # st.session_state.emotion_count = {'Focused': 0, 'Distracted': 0}
-            handRaisedCount = st.session_state.raisedCnt
-            engagement_level = st.session_state.engagement_level
-            print("End:",engagement_level,"\nHand Raised Count", handRaisedCount)
-            st.session_state.engagement_level = 0
-            st.session_state.raisedCnt = 0
+                print("End:",engagement_level,"\nHand Raised Count", handRaisedCount)
+                st.session_state.engagement_level = 0
+                st.session_state.raisedCnt = 0
 
-            # st.success("Logged In as {}".format(username))
+                # st.success("Logged In as {}".format(username))
 
-            # task = st.selectbox("Task",["Add Post","Analytics","Profiles"])
-            # if task == "Add Post":
-            #     st.subheader("Add Your Post")
-            # elif task == "Analytics":
-            #     st.subheader("Analytics")
-            # elif task == "Profiles":
-            #     st.subheader("User Profiles")
-            #     user_result = view_all_users()
-            #     clean_db = pd.DataFrame(user_result,columns=["Username","Password"])
-            #     st.dataframe(clean_db)
-        # else:
-        #     st.warning("Incorrect Username/Password")
+                # task = st.selectbox("Task",["Add Post","Analytics","Profiles"])
+                # if task == "Add Post":
+                #     st.subheader("Add Your Post")
+                # elif task == "Analytics":
+                #     st.subheader("Analytics")
+                # elif task == "Profiles":
+                #     st.subheader("User Profiles")
+                #     user_result = view_all_users()
+                #     clean_db = pd.DataFrame(user_result,columns=["Username","Password"])
+                #     st.dataframe(clean_db)
+        else:
+            st.error("Incorrect Username/Password")
+            # st.session_state["sidebarLoginCbx"] = False
 
 
 if __name__ == '__main__':
